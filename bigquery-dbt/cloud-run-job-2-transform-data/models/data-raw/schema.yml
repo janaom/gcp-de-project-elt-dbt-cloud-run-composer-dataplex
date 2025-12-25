@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: data_raw
+    description: "Source data from staging dataset"
+    schema: staging #BQ dataset
+    tables:
+      - name: raw_data #BQ table
+        description: "Raw financial transaction data"
+        columns:
+          - name: ID1
+            description: "Transaction identifier (prefix A)"
+            tests:
+              - not_null

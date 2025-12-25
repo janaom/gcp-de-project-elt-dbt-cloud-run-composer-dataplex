@@ -35,6 +35,17 @@ The logs will display all processes and results.
 
 <img width="1911" height="918" alt="Screenshot (47)" src="https://github.com/user-attachments/assets/bd97c68f-be58-4fe5-a3a5-c8dc94e11d25" />
 
+# BigQuery raw/transformed data
+
+Here is what the schema of the loaded raw data looks like in BigQuery.
+
+<img width="1917" height="911" alt="Screenshot (40)" src="https://github.com/user-attachments/assets/df5d5d37-cc7d-438f-bf3f-8471a66ce987" />
+
+And this is what the schema of the transformed data looks like.
+
+<img width="1915" height="904" alt="Screenshot (44)" src="https://github.com/user-attachments/assets/7afa2126-b2e5-4670-996a-38685d26bdab" />
+
+
 
 
 

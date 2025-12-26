@@ -6,7 +6,7 @@ This ELT project was inspired by the desire to learn how to use dbt on Google Cl
 
 Additionally, I came up with the idea to switch to Dataform, a GCP-native tool that offers similar functionality to dbt, so I tested this option here as well.
 
-# Cloud Run - CLoud Build - Artifact Registry
+# Cloud Run - Cloud Build - Artifact Registry
 
 First, write your dbt files and the Dockerfile. Next, build your image in Cloud Build and push this image to Artifact Registry. After that, deploy the image to Cloud Run and create a job.
 
@@ -20,9 +20,9 @@ Here is my Cloud Build history.
 
 Here are my 3 Cloud Run jobs:
 
-    dbt-test-raw-job: Runs tests on raw data that has been loaded into BigQuery.
-    dbt-transform-job: Executes transformations on raw data in BigQuery.
-    dbt-test-transformed-job: Conducts tests on the transformed data in BigQuery.
+    dbt-test-raw-job: Runs tests on raw data that has been loaded into BigQuery. Deploy this job: gcloud builds submit --config cloudbuild.test.raw.yml .
+    dbt-transform-job: Executes transformations on raw data in BigQuery. Deploy this job: gcloud builds submit --config cloudbuild.transform.yml .
+    dbt-test-transformed-job: Conducts tests on the transformed data in BigQuery. Deploy this job: gcloud builds submit --config cloudbuild.test.transformed.yml .
 
 
 <img width="1916" height="908" alt="Screenshot (43)" src="https://github.com/user-attachments/assets/54a0b894-c1a8-4857-8c53-e3d2dd0bd880" />

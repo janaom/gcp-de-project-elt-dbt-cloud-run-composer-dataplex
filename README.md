@@ -79,4 +79,4 @@ Here is the message in logs.
 
 <img width="1905" height="902" alt="Screenshot (76)" src="https://github.com/user-attachments/assets/5cb12770-70fe-4971-b9fe-789cf4cdf0d9" />
 
-
+If you want to try only this part of the pipeline, check `dag-cloud-run` DAG.

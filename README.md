@@ -61,8 +61,22 @@ And this is what the schema of the transformed data looks like.
 
 <img width="1915" height="904" alt="Screenshot (44)" src="https://github.com/user-attachments/assets/7afa2126-b2e5-4670-996a-38685d26bdab" />
 
+# Orchestration with Cloud Composer
 
+The main question is: how do we orchestrate the entire pipeline with Cloud Run Jobs? We're using Composer, Google’s managed Airflow service, specifically Composer 3. In this setup, we leverage the `CloudRunExecuteJobOperator` alongside Task Groups.
 
+In the gif below, you can see the DAG in action. Each Task Group includes four tasks. The logic here is straightforward: if the main task, like `execute_test_raw_data_job`, succeeds (shown in green), then `log_test_raw_success` will also turn green, and the `log_test_raw_failure` task will be skipped (displayed in pink). You can also check the Cloud Run Job logs for details on the passed tests.
 
+![20251227_213502_geras](https://github.com/user-attachments/assets/ef3c8d67-f38f-47b2-953b-5cb01682a582)
+
+See the Task Groups.
+
+<img width="1903" height="916" alt="Screenshot (74)" src="https://github.com/user-attachments/assets/8f83cba8-3be2-42cc-a721-4ab988d38646" />
+
+<img width="1912" height="914" alt="Screenshot (75)" src="https://github.com/user-attachments/assets/795575c6-4bc1-4ac3-8c46-d490aee372db" />
+
+Here is the message in logs.
+
+<img width="1905" height="902" alt="Screenshot (76)" src="https://github.com/user-attachments/assets/5cb12770-70fe-4971-b9fe-789cf4cdf0d9" />
 
 

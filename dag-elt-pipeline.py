@@ -1,6 +1,5 @@
 from airflow import DAG
 from airflow.providers.google.cloud.operators.cloud_run import CloudRunExecuteJobOperator
-from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 from airflow.providers.google.cloud.operators.gcs import GCSListObjectsOperator
 from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
 from airflow.utils.dates import days_ago

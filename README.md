@@ -1,6 +1,6 @@
-# Google Cloud Data Engineering project: ELT pipeline with Cloud Run function, Cloud Composer, DBT, Cloud Run, Daraform, BigQuery, Cloud Build 
+# Google Cloud Data Engineering project: ELT pipeline with dbt, Cloud Run, Composer, BigQuery, Dataplex
 
-<img width="1270" height="642" alt="image" src="https://github.com/user-attachments/assets/32057fb2-c10f-433e-b0de-eabb7ae623a4" />
+<img width="1370" height="669" alt="image" src="https://github.com/user-attachments/assets/a0c366ee-d105-4808-8288-b49830d2bca2" />
 
 This ELT project was inspired by the desire to learn how to use dbt on Google Cloud. The simplest and most cost-effective approach is to run dbt as a Cloud Run job.
 

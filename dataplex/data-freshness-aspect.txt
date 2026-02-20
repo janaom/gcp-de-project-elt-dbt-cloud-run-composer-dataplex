@@ -3,7 +3,7 @@
 ACCESS_TOKEN=$(gcloud auth print-access-token)
 
 curl --request POST \
-  "https://dataplex.googleapis.com/v1/projects/your-project-id/locations/eu/aspectTypes?aspectTypeId=data-compliance-and-privacy" \
+  "https://dataplex.googleapis.com/v1/projects/your-project-id/locations/eu/aspectTypes?aspectTypeId=data-freshness" \
   --header "Authorization: Bearer $ACCESS_TOKEN" \
   --header 'Accept: application/json' \
   --header 'Content-Type: application/json' \

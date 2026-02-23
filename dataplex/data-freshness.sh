@@ -1,4 +1,7 @@
-#run this in the terminal
+#!/bin/bash
+# This script creates a custom aspect type in Dataplex
+# Before running: Replace 'your-project-id' with your actual GCP project ID
+# Usage: bash data-freshness.sh
 
 ACCESS_TOKEN=$(gcloud auth print-access-token)
 

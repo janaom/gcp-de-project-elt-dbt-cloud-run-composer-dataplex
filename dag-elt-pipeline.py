@@ -7,6 +7,7 @@ from airflow.operators.python import PythonOperator
 from airflow.operators.email import EmailOperator
 from airflow.operators.dummy import DummyOperator
 from airflow.utils.task_group import TaskGroup
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from datetime import datetime, timedelta
 from airflow.providers.google.cloud.hooks.gcs import GCSHook
 import logging
@@ -273,6 +274,16 @@ with DAG(
         trigger_rule='all_success',
     )
 
+    # Task to trigger the Dataplex data quality scan DAG
+    trigger_data_quality_dag = TriggerDagRunOperator(
+        task_id='trigger_data_quality_dag',
+        trigger_dag_id='dataplex_etl_with_quality_checks_and_profile_scan',  # This must match the dag_id of your quality check DAG
+        wait_for_completion=True,  # Wait for the quality scan DAG to finish
+        deferrable=True, # Use deferrable mode to free up worker slots while waiting
+        failed_states=['failed'], # Consider the run failed if the downstream DAG fails
+        trigger_rule='all_success',
+    )
+
     # Task Group Dependencies
     list_gcs_objects >> load_to_bigquery >> move_gcs_files
 
@@ -281,5 +292,8 @@ with DAG(
     transform_data_group >> test_transformed_data_group
     
     # Set dependencies for final status tasks
-    test_transformed_data_group >> [log_pipeline_success, send_failure_email]
-    log_pipeline_success >> send_success_email
+    test_transformed_data_group >> log_pipeline_success
+    log_pipeline_success >> send_success_email >> trigger_data_quality_dag
+
+    # The failure email should be triggered if any of the main tasks fail
+    test_transformed_data_group >> send_failure_email

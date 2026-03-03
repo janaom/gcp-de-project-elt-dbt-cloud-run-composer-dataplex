@@ -142,7 +142,7 @@ with DAG(
         # A dummy task to join the success/failure branches
         join_raw = DummyOperator(
             task_id='join_raw',
-            trigger_rule='none_failed_or_skipped',
+            trigger_rule='all_done',
         )
 
         test_raw >> [log_test_raw_success, log_test_raw_failure] >> join_raw

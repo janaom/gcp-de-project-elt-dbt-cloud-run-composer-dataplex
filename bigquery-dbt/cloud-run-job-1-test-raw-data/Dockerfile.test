@@ -9,8 +9,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
 
 # Copy dbt project (needed for test definitions)
 COPY dbt_project.yml packages.yml profiles.yml ./
-COPY models/ models/
-COPY tests/ tests/
+COPY models/sources.yml models/sources.yml
 
 # Run tests ONLY (assumes transformed_data table exists)
-CMD ["sh", "-c", "dbt deps && dbt test --select data-raw"]
+CMD ["sh", "-c", "dbt deps && dbt test --select source:data_raw"]

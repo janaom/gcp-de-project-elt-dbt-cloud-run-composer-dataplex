@@ -1,3 +1,4 @@
+#set the entry point to 'trigger_dag'
 import google.auth
 from typing import Any
 from google.auth.transport.requests import AuthorizedSession
@@ -58,6 +59,3 @@ def make_composer3_web_server_request(
         kwargs["timeout"] = 90
 
     return authed_session.request(method, url, **kwargs)
-
-#add google-auth, requests, google-cloud-logging to requirements.txt
-#set the entry point to 'trigger_dag'

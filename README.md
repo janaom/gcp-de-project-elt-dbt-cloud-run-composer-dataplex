@@ -80,3 +80,34 @@ Here is the message in logs.
 <img width="1905" height="902" alt="Screenshot (76)" src="https://github.com/user-attachments/assets/5cb12770-70fe-4971-b9fe-789cf4cdf0d9" />
 
 If you want to try only this part of the pipeline, check `dag-cloud-run` DAG.
+
+
+To run the function, configure the following IAM roles:
+
+Eventarc Service Agent (service-<your-project-number>@gcp-sa-eventarc.iam.gserviceaccount.com)
+
+Eventarc Service Agent
+Cloud Run Invoker
+
+
+GCP Project Service Account (service-<your-project-number>@gs-project-accounts.iam.gserviceaccount.com)
+
+Pub/Sub Publisher
+
+
+Your Service Account
+
+Composer Worker
+Storage Object Viewer
+Cloud Run Invoker
+Eventarc Event Receiver
+
+
+Cloud Pub/Sub Service Account (service-<your-project-number>@gcp-sa-pubsub.iam.gserviceaccount.com)
+
+Cloud Pub/Sub Service Agent
+Service Account Token Creator
+
+
+
+See the documentation for details.

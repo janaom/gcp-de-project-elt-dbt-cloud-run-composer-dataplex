@@ -11,5 +11,5 @@ RUN pip install --no-cache-dir --upgrade pip && \
 COPY dbt_project.yml packages.yml profiles.yml ./
 COPY models/sources.yml models/sources.yml
 
-# Run tests ONLY (assumes transformed_data table exists)
+# Run tests ONLY (assumes raw_data table exists)
 CMD ["sh", "-c", "dbt deps && dbt test --select source:data_raw"]

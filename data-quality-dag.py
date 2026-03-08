@@ -135,7 +135,7 @@ with DAG(
 
         send_quality_results_email = EmailOperator(
             task_id='send_quality_scan_results_email',
-            to='jana.polianskaja@gmail.com',
+            to='your-email',
             subject='Dataplex Data Quality Scan Results for {{ ds }}',
             html_content="""
             <h3>Dataplex Data Quality Scan Results</h3>

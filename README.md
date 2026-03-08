@@ -103,7 +103,7 @@ Here are my 3 Cloud Run jobs:
     dbt-test-transformed-job: Conducts tests on the transformed data in BigQuery. Deploy this job: gcloud builds submit --config cloudbuild.test.transformed.yml .
 
 
-This command builds your image in Cloud Build, pushes it to Artifact Registry, and deploys it to Cloud Run as a job.
+These commands build your image in Cloud Build, pushes it to Artifact Registry, and deploys it to Cloud Run as a job.
 
 Here's how the Docker images appear in Artifact Registry:
 

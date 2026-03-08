@@ -37,6 +37,8 @@ Services I used in this project:
 
 Below, you can see how the entire pipeline works within the DAG. This is what we'll build step-by-step.
 
+![1_bt6prbg0-SZlBuRw0JCMcg](https://github.com/user-attachments/assets/ec251d07-3d98-45ed-9579-fa4e97b70b7d)
+
 This project demonstrates an automated data pipeline that processes incoming data files without requiring predefined schedules. When data arrives in Cloud Storage, whether from external systems, APIs, or manual uploads, a Cloud Run function detects the new file and triggers an Airflow DAG to begin processing.
 
 The main DAG `elt_financial_data_pipeline` orchestrates several tasks: it loads raw data into BigQuery, archives the processed file to a separate GCS folder, and executes three Cloud Run jobs. These containerized jobs perform data validation and transformation using dbt.
@@ -178,6 +180,9 @@ The complete DAG is available here: dag-elt-pipeline.py
 
 Below you can see the DAG in action. Each `TaskGroup` includes four tasks with straightforward logic: if the main task (like `execute_test_raw_data_job`) succeeds, it turns green, the success log task runs, and the failure task gets skipped (shown in pink).
 
+![1_KOAfGeQdT8N6GfgrgP4LwQ](https://github.com/user-attachments/assets/d872cf13-d875-438d-81f5-f7c9fdf7ca3f)
+
+
 The `EmptyOperator` doesn't perform any actual work - it acts as a control flow tool that merges execution branches. After the test runs, the pipeline splits into success and failure paths. The `join_raw` operator brings these branches back together, creating a single exit point. This simplifies dependencies: the next `TaskGroup` can depend on this one join task instead of managing complex dependencies on both the success and failure branches.
 
 But what if the test fails and you don't actually care? What if you don't want a failed test to block your downstream tasks?
@@ -199,6 +204,9 @@ This is how my pipeline ends. You can adapt it with your own logic, options, and
 By the way, have you ever seen a DAG task turn purple? Neither had I - until now!
 
 This happens because in the `elt_financial_data_pipeline` DAG, we're using the [`TriggerDagRunOperator`](https://registry.astronomer.io/providers/apache-airflow/versions/latest/modules/TriggerDagRunOperator) to trigger another DAG - `dataplex_etl_with_quality_checks_and_profile_scan`. This puts the task into a Deferred state. Deferred means the task has paused its execution, released its worker slot, and submitted a trigger to be picked up by the triggerer process, meaning the task is waiting without consuming unnecessary resources. This is actually a more efficient way to handle long-running tasks! You can read more about the Deferred state in the [Astronomer docs](https://www.astronomer.io/docs/learn/deferrable-operators).
+
+![1_2P5MUXcP_tzR33RTl9yCDQ](https://github.com/user-attachments/assets/37a60b1e-198f-42b7-a1b5-ab607031af19)
+
 
 # Email Alerts and Log Notifications 🔔
 
@@ -464,6 +472,9 @@ One of the most interesting features is being able to save data quality scan res
 ```
 
 Just a few lines of code, but the results in BigQuery are impressive.
+
+![1_UlWbwBbAgl15wOOexTyYJg](https://github.com/user-attachments/assets/9d4ddd97-7360-427a-b019-39f28f5dc312)
+
 
 I saved my scan results to a `dq_results` table, and honestly, it's been a game-changer. You get everything in one place: where the data lives (lake/zone/region), what quality rules you're checking, whether it passed or failed, and the overall score. Instead of hunting through different dashboards, you can query one table and see the full picture of your data health. This allows you to easily query, visualize, and build alerting on your data quality metrics over time.
 

@@ -95,7 +95,7 @@ with DAG(
         task_id='load_to_bigquery',
         bucket='elt-dev',
         source_objects=list_gcs_objects.output,
-        destination_project_dataset_table='elt-project-482220.staging.raw_data',
+        destination_project_dataset_table='your-project-id.staging.raw_data',
         source_format='CSV',
         create_disposition='CREATE_IF_NEEDED',
         write_disposition='WRITE_TRUNCATE',
@@ -112,7 +112,7 @@ with DAG(
     with TaskGroup("test_raw_data_group", tooltip="Test raw data in BigQuery") as test_raw_data_group:
         test_raw = CloudRunExecuteJobOperator(
             task_id='execute_test_raw_data_job',
-            project_id='elt-project-482220',
+            project_id='your-project-id',
             region='europe-west1',
             job_name='dbt-test-raw-job',
         )
@@ -151,7 +151,7 @@ with DAG(
     with TaskGroup("transform_data_group", tooltip="Transform data with dbt") as transform_data_group:
         transform = CloudRunExecuteJobOperator(
             task_id='execute_transform_job',
-            project_id='elt-project-482220',
+            project_id='your-project-id',
             region='europe-west1',
             job_name='dbt-transform-job',
         )
@@ -187,7 +187,7 @@ with DAG(
     with TaskGroup("test_transformed_data_group", tooltip="Run transformed data quality tests") as test_transformed_data_group:
         test_transformed = CloudRunExecuteJobOperator(
             task_id='execute_transformed_data_test_job',
-            project_id='elt-project-482220',
+            project_id='your-project-id',
             region='europe-west1',
             job_name='dbt-test-transformed-job',
         )
@@ -245,7 +245,7 @@ with DAG(
     # Final failure task
     send_failure_email = EmailOperator(
         task_id='send_failure_email',
-        to='jana.polianskaja@gmail.com',
+        to='your-email',
         conn_id='smtp_default',
         subject='[FAILED] DBT Pipeline: {{ dag.dag_id }}',
         html_content="""
@@ -261,7 +261,7 @@ with DAG(
     # Final success task
     send_success_email = EmailOperator(
         task_id='send_success_email',
-        to='jana.polianskaja@gmail.com',
+        to='your-email',
         conn_id='smtp_default',
         subject='[SUCCESS] DBT Pipeline: {{ dag.dag_id }}',
         html_content="""

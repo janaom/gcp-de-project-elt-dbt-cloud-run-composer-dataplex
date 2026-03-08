@@ -262,7 +262,7 @@ smtp
 
 <img width="1636" height="634" alt="image" src="https://github.com/user-attachments/assets/7987d331-9fd4-47ce-83b5-17feacc41632" />
 
-Note: For your Production project, you'll need to use Google Cloud Secret Manager to store your passwords. If you'd like more details, I have another project that shows how Secret Manager works. Follow these instructions for Composer 2 or Composer 3, and read more about Email Backend here.
+Note: For your Production project, you'll need to use Google Cloud Secret Manager to store your passwords. If you'd like more details, I have another [project](https://medium.com/apache-airflow/keep-your-airflow-variables-and-connections-safe-with-gcp-secret-manager-d2e9f68fbe4b) that shows how Secret Manager works. Follow these instructions for [Composer 2](https://docs.cloud.google.com/composer/docs/composer-2/configure-secret-manager) or [Composer 3](https://docs.cloud.google.com/composer/docs/composer-3/configure-secret-manager#console), and read more about Email Backend [here](https://docs.cloud.google.com/composer/docs/composer-3/configure-email).
 
 As you can see, I'm using my personal Gmail for both sending and receiving emails:
 
@@ -284,7 +284,7 @@ As you can see, I'm using my personal Gmail for both sending and receiving email
     )
 ```
 
-When you authenticate with smtp.gmail.com using your email and an App Password, Gmail's server enforces a security rule: the "From" address on any email you send must match the address of the account you used to log in.
+When you authenticate with `smtp.gmail.com` using your email and an App Password, Gmail's server enforces a security rule: the "From" address on any email you send must match the address of the account you used to log in.
 
 <img width="1470" height="606" alt="image" src="https://github.com/user-attachments/assets/0868811f-dd35-4556-8868-8f144c54e8e3" />
 
@@ -294,11 +294,11 @@ If it's a new service for you, I would recommend creating the Function manually.
 
 <img width="1636" height="362" alt="image" src="https://github.com/user-attachments/assets/20e04a9b-f282-4f36-b8b8-427cb8db37f5" />
 
-There are a few important code changes you need to make: add the DAG's name and file's prefix. In my case, my DAG is elt_financial_data_pipeline, CSV file prefix is synthetic_financial_data_. Function entry point will stay the same: trigger_dag.
+There are a few important code changes you need to make: add the DAG's name and file's prefix. In my case, my DAG is `elt_financial_data_pipeline`, CSV file prefix is `synthetic_financial_data_`. Function entry point will stay the same: `trigger_dag`.
 
 <img width="1636" height="658" alt="image" src="https://github.com/user-attachments/assets/93217150-e7f7-4c90-8b06-0f5a0be0628c" />
 
-To trigger your DAG, the Function needs to know your Airflow web UI, which can be visible on the Composer "Environment configuration". Don't forget to add it to the code too, as web_server_url. The good news is that this code works with both Composer 2 and Composer 3.
+To trigger your DAG, the Function needs to know your Airflow web UI, which can be visible on the Composer "Environment configuration". Don't forget to add it to the code too, as `web_server_url`. The good news is that this code works with both Composer 2 and Composer 3.
 
 ```python
 web_server_url = "https://composer-airflow-web-ui-dot-europe-west1.composer.googleusercontent.com"
@@ -306,15 +306,15 @@ web_server_url = "https://composer-airflow-web-ui-dot-europe-west1.composer.goog
 
 <img width="1636" height="727" alt="image" src="https://github.com/user-attachments/assets/ece401fc-b982-4f4e-85e3-de530eaea910" />
 
-When creating a trigger ("Add trigger"), pay attention to the Event type. Event type google.cloud.storage.object.v1.finalized means that the Cloud Run function will be triggered when a new object is successfully finalized (uploaded or overwritten) in the configured GCS bucket (in my case, it's "elt-dev"). With all pipeline components ready, simply drop the CSV file into the bucket, and the pipeline will start automatically.
+When creating a trigger ("Add trigger"), pay attention to the Event type. Event type `google.cloud.storage.object.v1.finalized` means that the Cloud Run function will be triggered when a new object is successfully finalized (uploaded or overwritten) in the configured GCS bucket (in my case, it's "elt-dev"). With all pipeline components ready, simply drop the CSV file into the bucket, and the pipeline will start automatically.
 
 <img width="1636" height="783" alt="image" src="https://github.com/user-attachments/assets/eb035ff3-a8e5-484a-9e81-10773780284c" />
 
-In the DAG elt_financial_data_pipeline, there's a task called move_gcs_files_to_proceed that moves processed files to the "proceed" folder, preventing them from being processed repeatedly. To understand how this works on the Function side, check the logs.
+In the DAG `elt_financial_data_pipeline`, there's a task called `move_gcs_files_to_proceed` that moves processed files to the "proceed" folder, preventing them from being processed repeatedly. To understand how this works on the Function side, check the logs.
 
 <img width="1636" height="737" alt="image" src="https://github.com/user-attachments/assets/45a431d7-8da3-4936-95fa-a347e45d7ba1" />
 
-It's important to skip the "proceed" folder in the bucket because our event type google.cloud.storage.object.v1.finalized triggers the Cloud Run function for any new object in the GCS bucket. Without this skip, the Function would be triggered when the "proceed" folder is created.
+It's important to skip the "proceed" folder in the bucket because our event type `google.cloud.storage.object.v1.finalized` triggers the Cloud Run function for any new object in the GCS bucket. Without this skip, the Function would be triggered when the "proceed" folder is created.
 
 The Eventarc trigger invocations dashboard will give you an opportunity to see all details, errors, and whether your Function can trigger the DAG.
 
@@ -336,7 +336,7 @@ Consult the official Google Cloud docs for your specific setup. Based on my impl
 
 - Cloud Pub/Sub Service Account (service-<your-project-number>@gcp-sa-pubsub.iam.gserviceaccount.com): Cloud Pub/Sub Service Agent, Service Account Token Creator. 
 
-For more info, see the Google Cloud docs for complete details and command-line setup.
+For more info, see the [Google Cloud docs](https://docs.cloud.google.com/run/docs/triggering/pubsub-triggers#required-roles-for-the-pubsub-service-agent) for complete details and command-line setup.
 
 # Dataplex 🔍
 
@@ -346,15 +346,15 @@ You can create many things manually in Dataplex, but I decided to try something 
 
 Let's discuss the Airflow operators for Dataplex:
 
-- DataplexCreateOrUpdateDataQualityScanOperator job is to manage the definition of the data quality scan within Dataplex. This operator ensures that a data quality scan with the ID financial-data-quality-scan  exists in Dataplex and that its configuration matches exactly what  you've defined in your DAG file. If the scan doesn't exist, it creates  it. If it exists, but your DAG has different rules, it updates it.
+- `DataplexCreateOrUpdateDataQualityScanOperator` job is to manage the definition of the data quality scan within Dataplex. This operator ensures that a data quality scan with the ID `financial-data-quality-scan`  exists in Dataplex and that its configuration matches exactly what  you've defined in your DAG file. If the scan doesn't exist, it creates  it. If it exists, but your DAG has different rules, it updates it.
   
-- DataplexRunDataQualityScanOperator only job is to trigger an execution of an already existing data quality scan. Once your rules are defined, this operator tells Dataplex to run the scan now. It can only trigger a scan that has already been defined.
+- `DataplexRunDataQualityScanOperator` only job is to trigger an execution of an already existing data quality scan. Once your rules are defined, this operator tells Dataplex to run the scan now. It can only trigger a scan that has already been defined.
   
-- DataplexGetDataQualityScanResultOperator retrieves the scan results after execution completes. It pulls the pass/fail status and detailed metrics.
+- `DataplexGetDataQualityScanResultOperator` retrieves the scan results after execution completes. It pulls the pass/fail status and detailed metrics.
 
 The same pattern applies to Dataplex operators when performing profile scans.
 
-Check this example of TaskGroup for a data quality scan. Find complete DAG here: <link>
+Check this example of `TaskGroup` for a data quality scan. Find complete DAG here: <link>
 
 ```python
 # Task Group for Data Quality Scan
@@ -437,11 +437,11 @@ with TaskGroup(group_id='data_quality_scan_group') as data_quality_scan_group:
     )
 ```
 
-The detailed data quality scan results are available via Airflow's XCom mechanism. To receive email alerts with these results, you can use the EmailOperator. The Composer backend and operator logic discussed earlier apply here.
+The detailed data quality scan results are available via Airflow's XCom mechanism. To receive email alerts with these results, you can use the `EmailOperator`. The Composer backend and operator logic discussed earlier apply here.
 
 One important thing to understand when using Dataplex operators in Airflow is that the DAG's job is to trigger and run the data quality scan - not to enforce the results. This means that even if Dataplex detects data quality issues like duplicates or missing values, the DAG itself will still show as successful. The scan ran, the results were captured, and Dataplex did its job.
 
-That's why I'm using the EmailOperator to receive scan results via email through XCom, so I can still review them manually and not miss any issues. If you want your DAG to actually fail based on quality results, you need to add additional logic, for example, checking the scan results in a subsequent task and raising an error if the overall score didn't pass.
+That's why I'm using the `EmailOperator` to receive scan results via email through XCom, so I can still review them manually and not miss any issues. If you want your DAG to actually fail based on quality results, you need to add additional logic, for example, checking the scan results in a subsequent task and raising an error if the overall score didn't pass.
 
 There are other ways to receive scan results via email. Although configuring everything in code can be challenging, you can simply edit an existing scan through the console and add your email and triggers to "Notification report".
 
@@ -451,7 +451,7 @@ You'll get a detailed email report showing the job overview and which rules fail
 
 <img width="950" height="825" alt="image" src="https://github.com/user-attachments/assets/e42c8c0f-0b22-46c5-90a0-d85bd919700e" />
 
-Additional options include defining data quality rules via gcloud CLI in YAML format or setting up Cloud Logging alerts to notify you of data quality issues. To learn more about Logging and Monitoring, see my previous project or the official docs - and don't hesitate to experiment!
+Additional options include defining data quality rules via gcloud CLI in [YAML](https://docs.cloud.google.com/dataplex/docs/use-auto-data-quality#create-scan-using-gcloud) format or [setting up Cloud Logging alerts](https://docs.cloud.google.com/dataplex/docs/use-auto-data-quality#set-alerts) to notify you of data quality issues. To learn more about Logging and Monitoring, see my previous [project](https://medium.com/google-cloud/%EF%B8%8Fgcp-data-engineering-project-data-pipeline-with-cloud-run-functions-airflow-and-bigquery-ml-5120ecbf161d) or the official docs - and don't hesitate to experiment!
 
 One of the most interesting features is being able to save data quality scan results straight to BigQuery. The DAG handles this automatically with a specific code section.
 
@@ -465,7 +465,7 @@ One of the most interesting features is being able to save data quality scan res
 
 Just a few lines of code, but the results in BigQuery are impressive.
 
-I saved my scan results to a dq_results table, and honestly, it's been a game-changer. You get everything in one place: where the data lives (lake/zone/region), what quality rules you're checking, whether it passed or failed, and the overall score. Instead of hunting through different dashboards, you can query one table and see the full picture of your data health. This allows you to easily query, visualize, and build alerting on your data quality metrics over time.
+I saved my scan results to a `dq_results` table, and honestly, it's been a game-changer. You get everything in one place: where the data lives (lake/zone/region), what quality rules you're checking, whether it passed or failed, and the overall score. Instead of hunting through different dashboards, you can query one table and see the full picture of your data health. This allows you to easily query, visualize, and build alerting on your data quality metrics over time.
 
 ---------
 
@@ -473,7 +473,7 @@ Let's see what was checked. The Airflow DAG ran 6 data quality rules on a financ
 
 <img width="1091" height="519" alt="image" src="https://github.com/user-attachments/assets/ff43d393-34c1-4fe4-a2a8-24937facf63d" />
 
-We can see that the column transaction_id failed the uniqueness test.
+We can see that the column `transaction_id` failed the uniqueness test.
 
 <img width="1636" height="782" alt="image" src="https://github.com/user-attachments/assets/76a8528c-3d99-4af4-98bc-61c637cd5c38" />
 
@@ -483,33 +483,25 @@ Let's analyze what actually happened.
 
 ⚠️ The Problem: Duplicate Transaction IDs
 
-Failed Rule: unique-transaction-id
-
-Pass Ratio: 99.53% (0.9953)
-
-Failing Records: 47 out of 10,000
+            Failed Rule: unique-transaction-id
+            Pass Ratio: 99.53% (0.9953)
+            Failing Records: 47 out of 10,000
 
 ❌ UNIQUENESS (50%) - Failed!
 
-Duplicate detection:
-
-transaction_id: Has duplicates (47 failing records) ✗
-
-reference_token: Unique ✓
+            Duplicate detection:
+            transaction_id: Has duplicates (47 failing records) ✗
+            reference_token: Unique ✓
 
 Why results show 50% of Uniqueness? 1 out of 2 uniqueness checks failed (transaction_id failed, reference_token passed)
 
 🚨 Business Impact
 
-For financial data, duplicate transaction IDs could mean:
-
-Double-counting transactions in reports
-
-Incorrect financial totals (revenue, fees, etc.)
-
-Reconciliation failures with external systems
-
-Compliance issues if audited
+            For financial data, duplicate transaction IDs could mean:
+            Double-counting transactions in reports
+            Incorrect financial totals (revenue, fees, etc.)
+            Reconciliation failures with external systems
+            Compliance issues if audited
 
 Priority: HIGH - This should be fixed before the data is used for financial reporting. In reality, you should investigate the root cause and add deduplication logic before loading the data.
 I couldn't believe my eyes! As I mentioned in the beginning, I expected the data to be perfect. It passed my dbt tests, but Dataplex caught issues I'd missed. I had to investigate and find the duplicate transaction IDs. Then I ran this query in BigQuery:
@@ -530,7 +522,7 @@ The Dataplex results were correct. The data contained 47 duplicates.
 
 <img width="1438" height="387" alt="image" src="https://github.com/user-attachments/assets/cb1f2b69-dd1a-4e55-bfb5-b1495ca1be9e" />
 
-You might be wondering: if dbt tests have already run, why did Dataplex still catch a duplicate issue? The answer is simple - I didn't add a uniqueness test for the transaction_id column in dbt. My focus was on not_null checks, etc., and I missed that one. This is a perfect real-world example of why layering multiple data quality checks matters. The more checks you have, the less likely something slips through!
+You might be wondering: if dbt tests have already run, why did Dataplex still catch a duplicate issue? The answer is simple - I didn't add a uniqueness test for the `transaction_id` column in dbt. My focus was on `not_null` checks, etc., and I missed that one. This is a perfect real-world example of why layering multiple data quality checks matters. The more checks you have, the less likely something slips through!
 
 -------------
 
@@ -538,6 +530,5 @@ If you want to learn more about Dataplex, stay tuned! I'll be publishing another
 
 --------------
 
-🌐 If you want to chat about Dataplex or share your experience, find me on LinkedIn!
+🌐 If you want to chat about Dataplex or share your experience, find me on [LinkedIn](https://www.linkedin.com/in/jana-polianskaja/)!
 
-See the documentation for details.

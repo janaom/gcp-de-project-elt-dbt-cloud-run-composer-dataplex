@@ -504,7 +504,7 @@ Let's analyze what actually happened.
             transaction_id: Has duplicates (47 failing records) ✗
             reference_token: Unique ✓
 
-Why results show 50% of Uniqueness? 1 out of 2 uniqueness checks failed (transaction_id failed, reference_token passed)
+Why results show 50% of Uniqueness? 1 out of 2 uniqueness checks failed (`transaction_id` failed, `reference_token` passed)
 
 🚨 Business Impact
 

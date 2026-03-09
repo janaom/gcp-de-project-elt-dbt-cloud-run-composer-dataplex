@@ -341,7 +341,7 @@ As you can see, I'm using my personal Gmail for both sending and receiving email
 
 When you authenticate with `smtp.gmail.com` using your email and an App Password, Gmail's server enforces a security rule: the "From" address on any email you send must match the address of the account you used to log in.
 
-<img width="1470" height="606" alt="image" src="https://github.com/user-attachments/assets/0868811f-dd35-4556-8868-8f144c54e8e3" />
+<img width="1348" height="732" alt="Screenshot 2026-03-09 132349" src="https://github.com/user-attachments/assets/54388f6f-0fdf-4a7b-b45d-535f38efeb4f" />
 
 # Cloud Run function ⚡
 

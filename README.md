@@ -130,22 +130,27 @@ The logs show all processes, results, and whether tests passed or failed.
 Note: Cloud Run can connect directly to GitHub, GitLab, or Bitbucket repositories for CI/CD automation. Check the [Google Cloud docs](https://docs.cloud.google.com/run/docs/quickstarts/deploy-continuously) for setup details.
 
 Here is another example, in Cloud Run job `dbt-test-transformed-job` which tests the transformed data, there are tests with severinity error/warn - what is the difference?
+I have 2 tests for fee_percentage.
+
+Column-level test:
 
 ```yaml
-          - name: fee_percentage
-            description: "Fee as percentage of gross amount"
-            tests:
-              - not_null
-              - dbt_expectations.expect_column_values_to_be_between:
-                  arguments:
-                    min_value: 0
-                    max_value: 5
-                  config:
-                    severity: warn
+- dbt_expectations.expect_column_values_to_be_between:
+    arguments:
+      min_value: 0
+      max_value: 5
 ```
-`warn` will not fail your job, but you will see it in the logs.
+Table-level test:
+
+```yaml
+- dbt_utils.expression_is_true:
+    arguments:
+      expression: "fee_percentage <= 5.0 OR gross_amount = 0"
+```
 
 <img width="1900" height="990" alt="Screenshot 2026-03-09 111607" src="https://github.com/user-attachments/assets/2c3d77bc-2220-4b89-ac2c-3ec71bf985d5" />
+
+Those tests give `warn` in logs.
 
 And if you decide to check your transformed data in BigQuery:
 ```sql
@@ -163,7 +168,6 @@ FROM `your-project-id.financial_data_dev.transformed_data`;
 
 <img width="1329" height="212" alt="image" src="https://github.com/user-attachments/assets/072dad0f-5053-471d-8827-db2796c3f04a" />
 
-This test checks: "Fee percentage should be between 0-5%"
 
 ✅ If all rows pass → Pipeline continues normally
 

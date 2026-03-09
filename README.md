@@ -129,6 +129,49 @@ The logs show all processes, results, and whether tests passed or failed.
 
 Note: Cloud Run can connect directly to GitHub, GitLab, or Bitbucket repositories for CI/CD automation. Check the [Google Cloud docs](https://docs.cloud.google.com/run/docs/quickstarts/deploy-continuously) for setup details.
 
+Here is another example, in Cloud Run job `dbt-test-transformed-job` which tests the transformed data, there are tests with severinity error/warn - what is the difference?
+
+```yaml
+          - name: fee_percentage
+            description: "Fee as percentage of gross amount"
+            tests:
+              - not_null
+              - dbt_expectations.expect_column_values_to_be_between:
+                  arguments:
+                    min_value: 0
+                    max_value: 5
+                  config:
+                    severity: warn
+```
+`warn` will not fail your job, but you will see it in the logs.
+
+<img width="1900" height="990" alt="Screenshot 2026-03-09 111607" src="https://github.com/user-attachments/assets/2c3d77bc-2220-4b89-ac2c-3ec71bf985d5" />
+
+And if you decide to check your transformed data in BigQuery:
+```sql
+-- Overall data quality summary
+SELECT 
+  COUNT(*) AS total_rows,
+  SUM(CASE WHEN merchant_id IS NULL THEN 1 ELSE 0 END) AS null_merchant_id,
+  SUM(CASE WHEN customer_id IS NULL THEN 1 ELSE 0 END) AS null_customer_id,
+  SUM(CASE WHEN final_status IS NULL THEN 1 ELSE 0 END) AS null_final_status,
+  SUM(CASE WHEN fee_amount > gross_amount THEN 1 ELSE 0 END) AS fee_exceeds_gross,
+  SUM(CASE WHEN fee_percentage > 5.0 THEN 1 ELSE 0 END) AS high_fee_percentage,
+  SUM(CASE WHEN calculated_net > gross_amount THEN 1 ELSE 0 END) AS net_exceeds_gross
+FROM `your-project-id.financial_data_dev.transformed_data`;
+```
+
+<img width="1329" height="212" alt="image" src="https://github.com/user-attachments/assets/072dad0f-5053-471d-8827-db2796c3f04a" />
+
+This test checks: "Fee percentage should be between 0-5%"
+
+✅ If all rows pass → Pipeline continues normally
+
+⚠️ If some rows have fee_percentage > 5% → Test fails but warns → Pipeline still runs
+
+You see a warning in the logs but the pipeline doesn't stop.
+
+
 # Orchestration with Cloud Composer ✨
 
 The main question is: how do we tie everything together when using Cloud Run jobs? This is where Composer comes to the rescue. Composer is Google Cloud's managed Airflow service, and for this project, I'm using Composer 3 with the `CloudRunExecuteJobOperator` organized into Task Groups. This approach provides cleaner visual structure and makes it easier to modify the pipeline later - say, if we want to skip certain failed tests or send notifications without blocking the entire workflow.

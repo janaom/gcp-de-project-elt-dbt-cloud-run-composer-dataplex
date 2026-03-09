@@ -3,7 +3,7 @@ version: 2
 sources:
   - name: financial_data_dev_source # A logical name for source group
     description: "Source data from the financial_data_dev dataset in BigQuery"
-    database: elt-project-482220 # BQ project
+    database: your-project-id # BQ project
     schema: financial_data_dev   # BQ dataset
     tables:
       - name: transformed_data # BQ table
